@@ -1,4 +1,4 @@
-# esridemo
+# ArcGIS API for JavaScript Demo
 esridemo
 编写实用的js Demo，以文件名以及运行效果.png存储
 
