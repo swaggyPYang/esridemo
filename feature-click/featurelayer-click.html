@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Feature Layer Only Map</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.22/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.22/"></script>
+    <script>
+      require([
+        "dojo/dom-construct",
+        "esri/map",
+        "esri/layers/FeatureLayer",
+        "esri/geometry/Extent",
+        "esri/InfoTemplate",
+        "dojo/domReady!"
+      ], function(
+          domConstruct,
+          Map,
+          FeatureLayer,
+          Extent,
+          InfoTemplate
+        ) {
+          var bounds = new Extent({
+            "xmin":-16045622,
+            "ymin":-811556,
+            "xmax":7297718,
+            "ymax":11142818,
+            "spatialReference":{"wkid":102100}
+          });
+
+          var map = new Map("map", {
+            extent: bounds
+          });
+
+          var url = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer/2";
+
+
+          var fl = new FeatureLayer(url, {
+            id: "world-regions"
+          });
+          fl.on('click',function(evt){
+            console.log(evt.graphic);
+          });
+
+          map.addLayer(fl);
+        }
+      );
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+</html>
