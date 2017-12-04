@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<style type="text/css">
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+</style>
+<link rel="stylesheet" href="https://js.arcgis.com/3.21/esri/css/esri.css">
+<script src="https://js.arcgis.com/3.21/"></script>
+<script type="text/javascript">
+	require([
+		"esri/map", 
+		"esri/Color",
+        "esri/config",
+		"esri/urlUtils",
+		"esri/layers/GraphicsLayer",
+		"esri/tasks/FeatureSet",
+		"esri/tasks/Geoprocessor",
+		"esri/tasks/query",
+		"esri/tasks/QueryTask",
+		"esri/symbols/SimpleLineSymbol",
+		"esri/symbols/SimpleFillSymbol",
+		"esri/symbols/SimpleMarkerSymbol",
+		"dojo/domReady!"], function(
+			Map,
+			Color,
+            esriConfig,
+			urlUtils,
+			GraphicsLayer,
+			FeatureSet,
+			Geoprocessor,
+			Query,
+			QueryTask,
+			SimpleLineSymbol,
+			SimpleFillSymbol,
+			SimpleMarkerSymbol
+			) {
+
+			var map = new Map("map", {
+			center: [104.072393, 30.662541],
+			zoom: 12,
+			basemap: "topo"
+		});
+
+		map.on("load",function(){
+			var gp = new Geoprocessor("https://sms.esrichina.com:6443/arcgis/rest/services/sms/Clip2/GPServer/Clip");
+			var queryTask= new QueryTask("https://sms.esrichina.com:6443/arcgis/rest/services/sms/wanwan/MapServer/1");
+			var query = new Query();
+			query.where="1=1";
+			query.outFields=["*"];
+			query.returnGeometry=true;
+
+			queryTask.execute(query,function(FeatureSet){
+		
+				console.log(FeatureSet)
+				queryTask= new QueryTask("https://sms.esrichina.com:6443/arcgis/rest/services/sms/wanwan/MapServer/2");
+				queryTask.execute(query,function(feature){
+
+				executeGP() 
+				function executeGP() {
+					var GPparams = {
+						"in_features ":FeatureSet,  
+						"clip_features ":feature
+							}
+					gp.submitJob(GPparams, completeCallback, statusCallback,gpJobFailed);
+				}
+				
+				function statusCallback(jobInfo){
+					// console.log(jobInfo.jobStatus);
+					console.log(jobInfo.messages)
+				}
+				
+				function completeCallback(jobInfo){
+					// console.log("caonima")
+					gp.getResultData(jobInfo.jobId,"out_feature_class",function(layer){
+						console.log(layer)
+					})
+				}
+				function gpJobFailed(error){
+					console.log(error)
+				}
+				});
+				})
+		});
+})
+
+</script>
+<body>
+	<div id="map"></div>
+</body>
+</html>
