@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>FeatureLayer</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/3.22/esri/css/esri.css">
+<script src="https://js.arcgis.com/3.22/"></script>
+
+<style>
+html, body, #map {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+</style>
+
+<script>
+require([
+    "esri/map",
+    "esri/layers/FeatureLayer",
+    "esri/tasks/query",
+    "esri/tasks/QueryTask",
+    "dojo/dom",
+    "dojo/on",
+    "dojo/domReady!"
+  ],
+  function(
+    Map,
+    FeatureLayer,
+    Query,
+    QueryTask,dom,on
+  ) {
+
+    var map = new Map("map", {
+      basemap: "hybrid",
+      center: [-82.44109, 35.6122],
+      zoom: 17
+    });
+    map.on("load",function(){
+      document.getElementsByClassName("esriSimpleSliderIncrementButton")[0].title="我最帅"
+      document.getElementsByClassName("esriSimpleSliderDecrementButton")[0].title="第一帅"
+    })
+
+  });
+</script>
+</head>
+
+<body>
+  <div id="map"></div>
+</body>
+
+</html>
