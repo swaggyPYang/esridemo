@@ -1,0 +1,91 @@
+<!-- tiandituMercator.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Load a basic WebMap - 4.5</title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.6/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+	    "esri/Basemap",
+      "esri/views/MapView",
+      "esri/layers/WebTileLayer",
+      "esri/geometry/Point",
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/Graphic",
+      "dojo/domReady!"
+    ], function(Map,Basemap,MapView,
+      WebTileLayer,Point,SimpleMarkerSymbol,Graphic
+    ) {
+
+      var tdtLayer = new WebTileLayer({
+          urlTemplate: "http://{subDomain}.tianditu.com/DataServer?T=vec_w&x={col}&y={row}&l={level}",
+          subDomains: ["t0","t1","t2","t3","t4","t5","t6","t7"],
+          copyright: "天地图"
+      });
+      var customBasemap = new Basemap({
+          baseLayers: [tdtLayer],
+          title: "Custom Basemap",
+          id: "myBasemap"
+      });
+  	  //定义地图
+      var map = new Map({
+  	    basemap: customBasemap
+      });    
+
+      /************************************************************
+       * Set the WebMap instance to the map property in a MapView.
+       ************************************************************/
+      var view = new MapView({
+        map: map,
+        container: "viewDiv",
+        zoom:6,
+        center:[113,32]
+      });
+      
+      view.then(function() {
+        var point = new Point({longitude:113,latitude:32});
+        var symbol = {type: "simple-marker", 
+                        style: "square",
+                        color: "red",
+                        size: "8px", 
+                        outline: {  
+                          color: [ 255, 0, 0 ],
+                          width: 3 
+                        }
+                     };
+        var graphic = new Graphic({
+          geometry:point,
+          symbol:symbol
+        });    
+        view.graphics.add(graphic);
+        // view.goTo({
+        //   target: point,
+        //   zoom: 11
+        // });
+      });      
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>
