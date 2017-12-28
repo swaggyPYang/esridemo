@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Feature Layer - display results as an InfoWindow onClick</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.23/dijit/themes/tundra/tundra.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.23/esri/css/esri.css">
+    <style>
+      html, body, #mapDiv {
+        padding:0;
+        margin:0;
+        height:100%;
+      }
+      #mapDiv {
+        position: relative;
+      }
+      #info {
+        background: #fff;
+        box-shadow: 0 0 5px #888;
+        left: 1em;
+        padding: 0.5em;
+        position: absolute;
+        top: 1em;
+        z-index: 40;
+      }
+      #table{
+        position: absolute;
+        background: #fff;
+        left: 1em;
+        top: 5em;
+        box-shadow: 0 0 5px #888;
+        z-index: 40;
+      }
+
+    </style>
+
+    <script src="https://js.arcgis.com/3.23/"></script>
+    <script>
+      var map, dialog;
+      require([
+        "esri/map", "esri/layers/FeatureLayer",
+        "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol",
+        "esri/renderers/SimpleRenderer", "esri/graphic", "esri/lang",
+        "esri/Color", "dojo/number", "dojo/dom-style",
+        "dijit/TooltipDialog", "dijit/popup", "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer,
+        SimpleFillSymbol, SimpleLineSymbol,
+        SimpleRenderer, Graphic, esriLang,
+        Color, number, domStyle,
+        TooltipDialog, dijitPopup
+      ) {
+        map = new Map("mapDiv", {
+          basemap: "streets",
+          center: [-80.94, 33.646],
+          zoom: 8,
+          slider: false
+        });
+
+        var southCarolinaCounties = new FeatureLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/3", {
+          mode: FeatureLayer.MODE_SNAPSHOT,
+          outFields: ["NAME", "POP2000", "POP2007", "POP00_SQMI", "POP07_SQMI"]
+        });
+        southCarolinaCounties.setDefinitionExpression("STATE_NAME = 'South Carolina'");
+
+        var symbol = new SimpleFillSymbol(
+          SimpleFillSymbol.STYLE_SOLID,
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID,
+            new Color([255,255,255,0.35]),
+            1
+          ),
+          new Color([125,125,125,0.35])
+        );
+        southCarolinaCounties.setRenderer(new SimpleRenderer(symbol));
+        map.addLayer(southCarolinaCounties);
+
+        map.infoWindow.resize(245,125);
+
+        dialog = new TooltipDialog({
+          id: "tooltipDialog",
+          style: "position: absolute; width: 250px; font: normal normal normal 10pt Helvetica;z-index:100"
+        });
+        dialog.startup();
+
+        var highlightSymbol = new SimpleFillSymbol(
+          SimpleFillSymbol.STYLE_SOLID,
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID,
+            new Color([255,0,0]), 3
+          ),
+          new Color([125,125,125,0.35])
+        );
+
+        //close the dialog when the mouse leaves the highlight graphic
+        map.on("load", function(){
+          map.graphics.enableMouseEvents();
+
+        });
+
+        //listen for when the onMouseOver event fires on the countiesGraphicsLayer
+        //when fired, create a new graphic with the geometry from the event.graphic and add it to the maps graphics layer
+        var i=1;
+        southCarolinaCounties.on("click", function(evt){
+          map.graphics.clear();
+          i++;
+          document.getElementById("table").innerHTML="anything"+i+"<br/>"+" anything";
+          var t = "<b>${NAME}</b><hr><b>2000 Population: </b>${POP2000:NumberFormat}<br>"
+            + "<b>2000 Population per Sq. Mi.: </b>${POP00_SQMI:NumberFormat}<br>"
+            + "<b>2007 Population: </b>${POP2007:NumberFormat}<br>"
+            + "<b>2007 Population per Sq. Mi.: </b>${POP07_SQMI:NumberFormat}";
+
+          var content = esriLang.substitute(evt.graphic.attributes,t);
+          var highlightGraphic = new Graphic(evt.graphic.geometry,highlightSymbol);
+          map.graphics.add(highlightGraphic);
+
+          dialog.setContent(content);
+
+          domStyle.set(dialog.domNode, "opacity", 0.85);
+          dijitPopup.open({
+            popup: dialog,
+            x: evt.pageX,
+            y: evt.pageY
+          });
+        });
+
+
+      });
+    </script>
+  </head>
+  <body class="tundra">
+    <div id="mapDiv">
+      <div id="table">
+        show samething here 
+      </div>
+      <div id="info">
+        click a county in South Carolina to get more information.
+      </div>
+    </div>
+  </body>
+</html>
