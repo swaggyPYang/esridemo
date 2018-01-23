@@ -1,0 +1,47 @@
+
+
+    .myInfoWindow
+    {
+        position: absolute;
+        z-index: 100;
+        width: 301px;
+        height: 301px;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -o-border-radius: 5px;
+        -moz-box-shadow: 0 0 1em #26393D;
+        border: 2px solid #046380;
+        font-family: sans-serif;
+        font-size: 12px;
+        background-color:#EFECCA;
+
+    }
+
+    /*关闭按钮*/
+    .myInfoWindow .close
+    {
+        position: absolute; top: 0px; right: 0px;
+        cursor: pointer;
+        background: url(https://serverapi.arcgisonline.com/jsapi/arcgis/2.6/js/dojo/dijit/themes/claro/layout/images/tabClose.png) no-repeat scroll 0 0 transparent;
+        width: 12px; height: 12px;
+        margin: 3px 3px 0px 0px;
+        z-index: 8000;
+    }
+
+    .myInfoWindow .close:hover
+    {
+        background-color: #F7FCFF;
+    }
+
+    /*弹窗标题*/
+    .myInfoWindow .title
+    {
+        cursor: move;
+        font-weight: bold;
+        padding: 2px 2px 2px 2px;
+        background-color:#1e4862;
+        opacity: 0.4;
+        color:#E6E2AF;
+        height: 20px;
+    }
