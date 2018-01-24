@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Unique Value Renderer</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.23/esri/css/esri.css">
+    <style>
+      html, body, #map{
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="https://js.arcgis.com/3.23/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/layers/FeatureLayer", "esri/InfoTemplate",
+        "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol",
+        "esri/renderers/UniqueValueRenderer", "esri/Color",
+        "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer, InfoTemplate,
+        SimpleLineSymbol, SimpleFillSymbol,
+        UniqueValueRenderer, Color
+      ) {
+        map = new Map("map", {
+          basemap: "streets",
+          center: [116.625, 39.243],
+          zoom: 4,
+          slider: false
+        });
+        map.on("load", addFeatureLayer);
+
+        function addFeatureLayer() {
+          var defaultSymbol = new SimpleFillSymbol().setStyle(SimpleFillSymbol.STYLE_NULL);
+          defaultSymbol.outline.setStyle(SimpleLineSymbol.STYLE_NULL);
+
+          //create renderer
+          var renderer = new UniqueValueRenderer(defaultSymbol, "Code","Ntype",null,":");
+
+
+          renderer.addValue("110114:150100", new SimpleFillSymbol().setColor(new Color([0, 0, 255, 0.5])));
+        
+          renderer.addValue("110106:150100", new SimpleFillSymbol().setColor(new Color([255, 255, 0, 0.5])));
+
+          renderer.addValue("110105:150100", new SimpleFillSymbol().setColor(new Color([255, 110, 0, 0.5])));
+
+          renderer.addValue("110228:150100", new SimpleFillSymbol().setColor(new Color([0, 0, 0, 0.5])));
+
+          renderer.addValue("110117:150100", new SimpleFillSymbol().setColor(new Color([120, 119, 110,0.5])));
+          
+          var featureLayer = new FeatureLayer("https://liy.esrichina.com:6443/arcgis/rest/services/dosthing/FEATURELAYER/MapServer/0", {
+            mode: FeatureLayer.MODE_ONDEMAND,
+            outFields: ["Code","Ntype"]
+          });
+          
+          featureLayer.setRenderer(renderer);
+          map.addLayer(featureLayer);
+        }
+      });
+    </script>
+  </head>
+  
+  <body>
+    <div id="map"></div>
+  </body>
+
+</html>
