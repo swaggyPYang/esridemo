@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "amd",//Will compile TypeScript code to AMD modules as needed by the JavaScript API.
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "jsxFactory": "tsx",
+    "target": "es5",//Output to ES5 to work across all supported browsers
+    "experimentalDecorators": true,
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true
+  },
+  "include": [
+    "./app/*"//Array of files to compile. Can use glob-like file patterns.
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+//tsc - This command will look at your tsconfig.json file and compile your TypeScript based on its configuration.
+//tsc -w - This command does the same as above, but will also watch for file changes and recompile files as you edit them

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Directions Widget</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.24/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.24/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height:100%;
+        width:100%;
+        margin:0;
+        padding:0;
+      }
+      body {
+        background-color:#FFF;
+        overflow:hidden;
+        font-family:"Trebuchet MS";
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.24/"></script>
+    <script>
+      require([
+        "esri/urlUtils", "esri/map", "esri/dijit/Directions","esri/layers/FeatureLayer",  "esri/InfoTemplate",
+        "dojo/parser",
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dojo/domReady!"
+      ], function(
+        urlUtils, Map, Directions,FeatureLayer,InfoTemplate,
+        parser
+      ) {
+        parser.parse();
+        //all requests to route.arcgis.com will proxy to the proxyUrl defined in this object.
+        urlUtils.addProxyRule({
+          urlPrefix: "route.arcgis.com",
+          proxyUrl: "/sproxy/"
+        });
+        urlUtils.addProxyRule({
+          urlPrefix: "traffic.arcgis.com",
+          proxyUrl: "/sproxy/"
+        });
+
+        var map = new Map("map", {
+          basemap: "gray",
+          center:[-98.56,39.82],
+          zoom: 4
+        });
+
+        //default will point to ArcGIS world routing service
+        var directions = new Directions({
+          map: map,
+          routeTaskUrl:"https://liy.esrichina.com/server/rest/services/networkAnaly/NAServer/Route",
+      //     sources: [{
+      //     featureLayer: new FeatureLayer("https://services.arcgis.com/b6gLrKHqgkQb393u/arcgis/rest/services/TaxParcelQuery/FeatureServer/0", {
+      //       outFields: ["*"],
+      //       infoTemplate: new InfoTemplate("Parcels", "Owner name: ${OWNERNME1}</br>Parcel ID: ${PARCELID}</br>Site address: ${SITEADDRESS}")
+      //     }),
+      //     outFields: ["OWNERNME1","PARCELID","SITEADDRESS"],
+      //     displayField: "PARCELID",
+      //     suggestionTemplate: "${PARCELID}: ${SITEADDRESS}",
+      //     name: "Parcels",
+      //     placeholder: "example: Shawn Smith",
+      //     enableSuggestions: true
+      // }],
+      //     searchOptions:{
+      //       sources: [{
+      //     featureLayer: new FeatureLayer("https://liy.esrichina.com/server/rest/services/sanDiego/FeatureServer/0", {
+      //       outFields: ["*"],
+      //       //infoTemplate: new InfoTemplate("Parcels", "Owner name: ${OWNERNME1}</br>Parcel ID: ${PARCELID}</br>Site address: ${SITEADDRESS}")
+      //     }),
+      //     outFields: ["ZELEV"],
+      //     displayField: "ZELEV",
+      //     suggestionTemplate: "${ZELEV}: ${ZELEV}",
+      //     name: "ZELEV",
+      //     placeholder: "example: Shawn Smith",
+      //     enableSuggestions: true
+      // }],
+          // }
+          // --------------------------------------------------------------------
+          // New constuctor option and property showSaveButton added at version
+          // 3.17 to allow saving route. For more information see the API Reference.
+          // https://developers.arcgis.com/javascript/3/jsapi/directions-amd.html#showsavebutton
+          //
+          // Uncomment the line below to add the save button to the Directions widget
+          // --------------------------------------------------------------------
+          // , showSaveButton: true
+        },"dir");
+        directions.startup();
+      });
+    </script>
+  </head>
+  <body class="claro">
+    <div data-dojo-type="dijit/layout/BorderContainer"
+         data-dojo-props="design:'headline', gutters:false"
+         style="width:100%;height:100%;">
+      <div data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'right'"
+           style="width:250px;">
+
+        <div id="dir"></div>
+      </div>
+      <div id="map"
+           data-dojo-type="dijit/layout/ContentPane"
+           data-dojo-props="region:'center'">
+      </div>
+    </div>
+  </body>
+</html>
