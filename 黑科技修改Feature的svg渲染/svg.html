@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>FeatureLayer</title>
+
+<link rel="stylesheet" href="http://js.arcgis.com/3.25/esri/css/esri.css">
+<script src="http://js.arcgis.com/3.25/"></script>
+
+<style>
+html, body, #map {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+</style>
+
+<script>
+require([
+    "esri/map",
+    "esri/layers/FeatureLayer",
+    "dojo/on",
+    "dojo/domReady!"
+  ],
+  function(
+    Map,
+    FeatureLayer,
+    on
+  ) {
+
+    var map = new Map("map", {
+      basemap: "gray",
+      center: [-82.44109, 35.6122],
+      zoom: 17
+    });
+
+    /****************************************************************
+     * Add feature layer - A FeatureLayer at minimum should point
+     * to a URL to a feature service or point to a feature collection 
+     * object.
+     ***************************************************************/
+
+    // Carbon storage of trees in Warren Wilson College.
+    var featureLayer = new FeatureLayer("http://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Landscape_Trees/FeatureServer/0");
+     map.addLayer(featureLayer);
+    if (featureLayer.surfaceType === "svg") {
+        // construct a linear quantitative scale with a discrete output range
+        // A scale's input domain is the range of possible input data values
+
+
+        on(featureLayer, "graphic-draw", function (evt) {
+            // evt.node.setAttribute("data-classification", range);
+           evt.node.setAttribute("filter", "url(#filter2)");
+        });
+        featureLayer.on("load",function(){
+              var svgfilter='<filter id="filter2" x="0" y="0" width="400%" height="400%"><feOffset result="offOut" in="SourceAlpha" dx="30" dy="60" /><feGaussianBlur result="blurOut" in="offOut" stdDeviation="20" /><feBlend in="SourceGraphic" in2="blurOut" mode="normal" /></filter>'
+                    document.getElementById("map_gc").innerHTML=svgfilter;
+            })
+    }
+
+   
+
+  });
+</script>
+</head>
+
+<body>
+  <div id="map"></div>
+</body>
+
+</html>
