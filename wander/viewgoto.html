@@ -99,48 +99,12 @@
         });
 
       view.on("click",function(){
-      //   view.goTo([111,20]).then(function(){
-      //   return sleep(500);
-      // }).then(function(){
-      //   return view.goTo([180,20]);
-      // }).then(function(){
-      //   return sleep(500)
-      // }).then(function(){
-      //   view.goTo([116,32])
-      // })
-
-
-      // var poins = [[-74,60],[-74,50],[-74,22],[180,22]]
-
-
-      // var promisify = function(func){
-      //   return function(){
-      //     return view.goTo(func);
-      //   }
-        
-      // }
-
-      // func_arr=[]
-
-      // for(var i = 0;i<poins.length;i++){
-      //   func_arr[i] = promisify(poins[i]);
-      // }
-      // func_arr.reduce(function(cur, next) {
-      //     return cur.then(next);
-      // }, Promise.resolve()).then(function() {
-      //     console.log('job finished');
-      // });
-
         var wander = new Wander({
           view:view,
           line:line
           // option:{}
         })
         wander.do();
-
-
-
-
       })
       
 
