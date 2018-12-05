@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Intro to SceneLayer - 4.8</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.8/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.8/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "./wander.min.js",
+      "esri/layers/SceneLayer",
+      "esri/geometry/Polyline",
+
+      "dojo/domReady!"
+    ], function(Map, SceneView,Wander, SceneLayer,Polyline) {
+
+      // Create Map
+      var map = new Map({
+        basemap: "dark-gray",
+        // ground: "world-elevation"
+      });
+
+      // Create the SceneView
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: [-74.0338, 40.6913, 100],
+          tilt: 0,
+          heading: 50
+        }
+      });
+
+      // Create SceneLayer and add to the map
+      var sceneLayer = new SceneLayer({
+        portalItem: {
+          id: "2e0761b9a4274b8db52c4bf34356911e"
+        },
+        popupEnabled: false
+      });
+      map.add(sceneLayer);
+
+      // Create MeshSymbol3D for symbolizing SceneLayer
+      var symbol = {
+        type: "mesh-3d", // autocasts as new MeshSymbol3D()
+        symbolLayers: [{
+          type: "fill", // autocasts as new FillSymbol3DLayer()
+          // If the value of material is not assigned, the default color will be grey
+          material: {
+            color: [244, 247, 134]
+          }
+        }]
+      };
+      // Add the renderer to sceneLayer
+      sceneLayer.renderer = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: symbol
+      };
+
+      function sleep(ms){
+          var temple=new Promise(
+          (resolve)=>{
+            setTimeout(resolve,ms)
+          });
+          return temple
+      }
+
+        var paths = [
+           [  // first path
+           [97.06138,32.837],
+          [-97.06133,32.836],
+          [97.06124,32.834],
+           // second path
+          [-97.06326,32.759],
+          [97.06298,32.755]
+         ]
+        ];
+
+        var line = new Polyline({
+          hasZ: false,
+          hasM: true,
+          paths: paths,
+          spatialReference: { wkid: 4326 }
+        });
+
+      view.on("click",function(){
+      //   view.goTo([111,20]).then(function(){
+      //   return sleep(500);
+      // }).then(function(){
+      //   return view.goTo([180,20]);
+      // }).then(function(){
+      //   return sleep(500)
+      // }).then(function(){
+      //   view.goTo([116,32])
+      // })
+
+
+      // var poins = [[-74,60],[-74,50],[-74,22],[180,22]]
+
+
+      // var promisify = function(func){
+      //   return function(){
+      //     return view.goTo(func);
+      //   }
+        
+      // }
+
+      // func_arr=[]
+
+      // for(var i = 0;i<poins.length;i++){
+      //   func_arr[i] = promisify(poins[i]);
+      // }
+      // func_arr.reduce(function(cur, next) {
+      //     return cur.then(next);
+      // }, Promise.resolve()).then(function() {
+      //     console.log('job finished');
+      // });
+
+        var wander = new Wander({
+          view:view,
+          line:line
+          // option:{}
+        })
+        wander.do();
+
+
+
+
+      })
+      
+
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>
